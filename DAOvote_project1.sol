@@ -108,7 +108,6 @@ contract Voting is Ownable{
         uint winningVoteCount = 0;
         for (uint i = 0; i < proposalsList.length; i++) {
             if (proposalsList[i].voteCount > winningVoteCount) {
-                // What if equality ?
                 // Pour l'instant c'est la première proposal submitted qui l'emporte en cas d'égalité (Pour suciter la rapidité de soumission des propositions ;-)
                 winningVoteCount = proposalsList[i].voteCount;
                 winningProposalId = i;
