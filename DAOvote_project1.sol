@@ -5,28 +5,31 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 contract Voting is Ownable{
 
-    mapping (address => bool) public whiteList;
     struct Voter {
         address voterAddress;
         bool isRegistered; // En considérant que whiteListed = isRegistered
         bool hasVoted;
         uint votedProposalId;
     }
-    mapping (address => Voter) voters;
     struct Proposal {
         uint proposalId;
         string description;
         uint voteCount;
     }
-    Proposal[] public proposalsList;
+
+    mapping (address => bool) public whiteList;
+    mapping (address => Voter) voters;
+
     enum WorkflowStatus { RegisteringVoters,
                         ProposalsRegistrationStarted,
                         ProposalRegistrationEnded,
                         VotingSessionStarted,
                         VotingSessionEnded,
                         VotesTallied }
+
     WorkflowStatus public currentStatus;
     uint winningProposalId;
+    Proposal[] public proposalsList;
 
     // event declaration
     event VoterRegistered(address _address);
@@ -115,14 +118,14 @@ contract Voting is Ownable{
     }
 
     // Tout le monde peut vérifier les derniers détails de la proposition gagnante.
-    function getWinningProposal() public view returns(Proposal memory){
+    function getWinningProposal() public view returns(Proposal memory) {
         require(currentStatus == WorkflowStatus.VotesTallied, InvalidWorkflowStatus());
         return proposalsList[winningProposalId];
     }
 
     // Le vote n'est pas secret pour les utilisateurs ajoutés à la Whitelist
     // Chaque électeur peut voir les votes des autres
-    function getVoter(address _address) public view onlyWhitelisted returns(Voter memory){
+    function getVoter(address _address) public view onlyWhitelisted returns(Voter memory) {
         // require pas indispensable on peut consulter même si le vote n'a pas encore été fait
         return voters[_address];
     }
